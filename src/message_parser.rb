@@ -38,10 +38,10 @@ class MessageParser
 	end
 
 	def getNormalMessages
-		msgTemplate = /<div class="chatLine" id="message_(\d+?)"><span class="picBox"><img class="profilePic" src="(?:.*?)"\/><\/span><span class="message"><span class="date" data-localtime-format>(.*?)<\/span><br( \/)?><span class="userName( adminName)?">(.+?)<\/span>: (.+?)<\/span><\/div>/im
+		msgTemplate = /<div class="chatLine" id="message_(\d+?)"><span class="picBox"><img class="profilePic" src="(?:\S*?)"\/><\/span><span class="message"><span class="date" data-localtime-format>(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})<\/span><br(?: \/)?><span class="userName(?: adminName)?">(.+?)<\/span>: (.+?)<\/span><\/div>/im
 		results = @data.scan(msgTemplate)
 		return (results.map do |message|
-			Message.new(message[0].to_i,clean_timestamp(message[1]),message[4],clean_message(message[5]))
+			Message.new(message[0].to_i,clean_timestamp(message[1]),message[2],clean_message(message[3]))
 		end).concat(getMeMessages)
 	end
 
