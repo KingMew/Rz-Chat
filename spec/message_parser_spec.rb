@@ -17,7 +17,7 @@ describe MessageParser do
 		end
 		it "should parse emojis correctly" do
 			messages = @parser.parse
-			expect(messages[7].message).to eq ":mrwonderfulscream:"
+			expect(messages[8].message).to eq ":mrwonderfulscream:"
 		end
 		it "should get time correctly" do
 			messages = @parser.parse
@@ -26,6 +26,10 @@ describe MessageParser do
 		it "should get message ID" do
 			messages = @parser.parse
 			expect(messages[0].id).to eq 214981
+		end
+		it "should parse /me text" do
+			messages = @parser.parse
+			expect(messages[9].message).to eq "/me remembers Pepperidge Farm"
 		end
 	end
 end
