@@ -11,7 +11,7 @@ class ChatChannel
 		@messages = @messages.concat(parser.parse)
 	end
 
-	def getMessages
+	def get_messages
 		return @messages
 	end
 end
