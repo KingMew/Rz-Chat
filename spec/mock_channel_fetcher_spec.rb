@@ -1,20 +1,15 @@
 require_relative '../src/mock_channel_fetcher'
 
 describe MockChannelFetcher do
-	describe '.new' do
-		it "should be creatable" do
-			MockChannelFetcher.new
-		end
-	end
-	describe 'fetchHeartbeat' do
-		it "should return some data" do
+	describe 'fetch_heartbeat' do
+		it 'should return some data' do
 			heartbeat = MockChannelFetcher.new
-			expect(heartbeat.fetchHeartbeat).not_to eq ''
+			expect(heartbeat.fetch_heartbeat).not_to eq ''
 		end
 		it 'should stop returning data on subsequent heartbeats' do
 			heartbeat = MockChannelFetcher.new
-			heartbeat.fetchHeartbeat
-			expect(heartbeat.fetchHeartbeat).to eq ''
+			heartbeat.fetch_heartbeat
+			expect(heartbeat.fetch_heartbeat).to eq ''
 		end
 	end
 end

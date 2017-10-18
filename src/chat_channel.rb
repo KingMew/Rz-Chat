@@ -7,7 +7,7 @@ class ChatChannel
 	end
 
 	def heartbeat
-		parser = MessageParser.new(@heartbeat.fetchHeartbeat)
+		parser = MessageParser.new(@heartbeat.fetch_heartbeat)
 		@messages = @messages.concat(parser.parse)
 	end
 
