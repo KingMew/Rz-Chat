@@ -22,4 +22,14 @@ describe ChatChannel do
 			expect(@channel.get_messages.length).to eq 11
 		end
 	end
+
+	describe '.send_message' do
+		it 'should be able to send messages' do
+			msg_text = 'The RZ were better before the drummer left'
+			@channel.heartbeat
+			@channel.send_message msg_text
+			@channel.heartbeat
+			expect(@channel.get_messages[11].message).to eq msg_text
+		end
+	end
 end

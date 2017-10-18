@@ -11,6 +11,10 @@ class ChatChannel
 		@messages = @messages.concat(parser.parse)
 	end
 
+	def send_message(msg)
+		@heartbeat.send_message(msg)
+	end
+
 	def get_messages
 		return @messages
 	end
