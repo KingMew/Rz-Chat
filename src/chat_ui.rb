@@ -36,11 +36,6 @@ class ChatUI
 			message_pieces.reverse_each do |piece|
 				lines.push(piece)
 			end
-			# printed_msg = "#{message.time} <#{message.author}> #{message.message}" #TODO: Make this a dedicated class
-			# message_pieces = printed_msg.chars.each_slice(@maxx-2).map(&:join)
-			# message_pieces.reverse_each do |piece|
-			# 	lines.push(piece)
-			# end
 		end
 		lines
 	end
@@ -64,7 +59,6 @@ class ChatUI
 			end
 			@chatlog.move(cursor,1)
 			@chatlog.addstr("#{message}")
-			#end
 			cursor -= 1
 			@chatlog.wrefresh
 		end
