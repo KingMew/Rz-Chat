@@ -2,7 +2,7 @@ require "ncurses"
 require "terminfo"
 require_relative 'chat_channel'
 require_relative 'mock_channel_fetcher'
-
+require_relative 'message_formatter'
 class ChatUI
 	def initialize(userinfo)
 		@userinfo = userinfo
@@ -16,6 +16,7 @@ class ChatUI
 
 		@chatlog
 		@input
+		@error
 	end
 
 	def init_draw
@@ -28,12 +29,18 @@ class ChatUI
 	def get_channel_lines
 		messages = @channel.get_messages
 		lines = []
+		formatter = MessageFormatter.new(@maxx-2)
 		messages.reverse_each do |message|
-			printed_msg = "#{message.time} <#{message.author}> #{message.message}" #TODO: Make this a dedicated class
-			message_pieces = printed_msg.chars.each_slice(@maxx-2).map(&:join)
+			message_pieces = formatter.format(message)
+			message_pieces[0] = "!#{message.time};#{message.author};#{message_pieces[0]}"
 			message_pieces.reverse_each do |piece|
 				lines.push(piece)
 			end
+			# printed_msg = "#{message.time} <#{message.author}> #{message.message}" #TODO: Make this a dedicated class
+			# message_pieces = printed_msg.chars.each_slice(@maxx-2).map(&:join)
+			# message_pieces.reverse_each do |piece|
+			# 	lines.push(piece)
+			# end
 		end
 		lines
 	end
@@ -45,9 +52,21 @@ class ChatUI
 		cursor = @maxy-5
 		msgs = get_channel_lines
 		(@maxy-5).times do |i|
+			message = msgs[i+start]
+			if message != nil
+				if message[0] == "!"
+						pieces = msgs[i+start][1..-1].split(";")
+						time = pieces[0]
+						author = pieces[1]
+						message = pieces[2..-1].join(";")
+						message = "#{time} <#{author}> #{message}"
+				end
+			end
 			@chatlog.move(cursor,1)
-			@chatlog.addstr("#{msgs[i+start]}")
+			@chatlog.addstr("#{message}")
+			#end
 			cursor -= 1
+			@chatlog.wrefresh
 		end
 		@chatlog.wrefresh
 	end
@@ -115,7 +134,13 @@ class ChatUI
 		@chatlog.wrefresh
 		@input.keypad(true)
 		server = Thread.new do
-			channel_heartbeat_thread
+			begin
+				channel_heartbeat_thread
+			rescue Exception => e
+				@quit = true
+				@error = e.message+"\n"+e.backtrace.join("\n")
+				puts "ERROR"
+			end
 		end
 		loop do
 			msg = draw_input_buffer.strip
@@ -134,5 +159,6 @@ class ChatUI
 		draw_windows
 		Ncurses.echo
 		Ncurses.endwin
+		puts @error
 	end
 end
