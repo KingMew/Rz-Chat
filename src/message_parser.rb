@@ -1,3 +1,4 @@
+require 'cgi'
 class MessageParser
 	Message = Struct.new("Message",:id,:time,:author,:message)
 	def initialize(htmldata)
@@ -42,7 +43,7 @@ class MessageParser
 		results = @data.scan(msgTemplate)
 		return (results.map do |message|
 			Message.new(message[0].to_i,clean_timestamp(message[1]),message[2],clean_message(message[3]))
-		end).concat(getMeMessages)
+		end)
 	end
 
 	def parse
