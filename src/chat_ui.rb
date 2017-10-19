@@ -3,6 +3,7 @@ require "terminfo"
 require_relative 'chat_channel'
 require_relative 'mock_channel_fetcher'
 require_relative 'message_formatter'
+require_relative 'nick_color'
 class Curses::Window
 	def mvaddstr(y,x,str)
 		setpos(y,x)
@@ -12,7 +13,7 @@ end
 class ChatUI
 	def initialize(userinfo)
 		@userinfo = userinfo
-		@buffer = "test message"
+		@buffer = ""
 		@cursor_pos = 0
 		@scroll_height = 0
 		@channel = ChatChannel.new(MockChannelFetcher.new)
@@ -26,20 +27,35 @@ class ChatUI
 	end
 
 	def init_draw
-		init_pairs
 		Curses.init_screen
+		Curses.start_color
+		init_pairs
 		Curses.cbreak
 		Curses.noecho
 		@maxy,@maxx = TermInfo.screen_size
 	end
 
 	def init_pairs
-		Curses.init_pair(1, Curses::COLOR_RED, Curses::COLOR_BLACK)
-		Curses.init_pair(2, Curses::COLOR_GREEN, Curses::COLOR_BLACK)
-		Curses.init_pair(3, Curses::COLOR_YELLOW, Curses::COLOR_BLACK)
-		Curses.init_pair(4, Curses::COLOR_BLUE, Curses::COLOR_BLACK)
-		Curses.init_pair(5, Curses::COLOR_MAGENTA, Curses::COLOR_BLACK)
-		Curses.init_pair(6, Curses::COLOR_CYAN, Curses::COLOR_BLACK)
+		Curses.use_default_colors
+		Curses.init_pair(1, Curses::COLOR_RED, -1)
+		Curses.init_pair(2, Curses::COLOR_GREEN, -1)
+		Curses.init_pair(3, Curses::COLOR_YELLOW, -1)
+		Curses.init_pair(4, Curses::COLOR_BLUE, -1)
+		Curses.init_pair(5, 175, -1)
+		Curses.init_pair(6, Curses::COLOR_CYAN, -1)
+		if Curses.can_change_color?
+			Curses.init_pair(7, 240, -1)
+		else
+			Curses.init_pair(7,Curses::COLOR_WHITE, -1)
+		end
+		Curses.init_pair(8, 120,-1)
+		Curses.init_pair(9, 94,-1) #MUSTARD BOYZ
+		Curses.init_pair(10, 202,-1)
+		Curses.init_pair(11, 131,-1)
+		Curses.init_pair(12, 82,-1)
+		Curses.init_pair(13, 198,-1)
+		Curses.init_pair(14, 99,-1)
+		Curses.init_pair(15, 100,-1)
 	end
 
 	def get_channel_lines
@@ -71,9 +87,29 @@ class ChatUI
 					time = pieces[0]
 					author = pieces[1]
 					message = pieces[2..-1].join(";")
-					message = "#{time} <#{author}> #{message}"
+					color = NickColor.new(author).getColor
 					@chatlog.setpos(cursor,1)
-					@chatlog.addstr("#{message}") #TODO: colorize, baby
+					@chatlog.attron(Curses.color_pair(7))
+					@chatlog.addstr("#{time} ")
+					@chatlog.attroff(Curses.color_pair(7))
+					if message.slice(0,4) != "/me "
+						@chatlog.addstr("<")
+						if color > -1
+							@chatlog.attron(Curses.color_pair(color))
+							@chatlog.addstr(author)
+							@chatlog.attroff(Curses.color_pair(color))
+						else
+							@chatlog.addstr(author)
+						end
+						@chatlog.addstr("> #{message}")
+					else
+						@chatlog.attron(Curses.color_pair(color))
+						@chatlog.attron(Curses::A_BOLD)
+						@chatlog.addstr("*#{author}  ")
+						@chatlog.attroff(Curses::A_BOLD)
+						@chatlog.attroff(Curses.color_pair(color))
+						@chatlog.addstr("#{message[4..-1]}")
+					end
 				else
 					@chatlog.setpos(cursor,1)
 					@chatlog.addstr("#{message}")
@@ -83,6 +119,7 @@ class ChatUI
 			@chatlog.refresh
 		end
 		@chatlog.refresh
+		reset_cursor
 	end
 
 	def channel_heartbeat_thread
@@ -95,15 +132,32 @@ class ChatUI
 		end
 	end
 
+	def reset_cursor
+		userstr = "[#{@userinfo.username}] ";
+		userstr_len = userstr.length
+		@input.setpos(1,userstr_len+1+@cursor_pos)
+	end
+
 	def draw_input_buffer
 		@input.clear
 		@input.box(0,0)
 		userstr = "[#{@userinfo.username}] ";
 		userstr_len = userstr.length
+		color = NickColor.new(@userinfo.username).getColor
 		loop do
-			@input.mvaddstr(1,1,userstr)
+			@input.mvaddstr(1,1,"[")
+			if color > -1
+				@input.attron(Curses.color_pair(color))
+				@input.attron(Curses::A_BOLD)
+				@input.addstr(@userinfo.username)
+				@input.attroff(Curses::A_BOLD)
+				@input.attroff(Curses.color_pair(color))
+			else
+				@input.addstr(@userinfo.username)
+			end
+			@input.addstr("] ");
 			@input.mvaddstr(1,userstr_len+1,@buffer)
-			@input.setpos(1,userstr_len+1+@cursor_pos)
+			reset_cursor
 			ch = @input.getch
 			case ch.ord
 				when Curses::KEY_LEFT
