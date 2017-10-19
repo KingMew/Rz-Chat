@@ -1,12 +1,18 @@
-require "ncurses"
+require "curses"
 require "terminfo"
 require_relative 'chat_channel'
 require_relative 'mock_channel_fetcher'
 require_relative 'message_formatter'
+class Curses::Window
+	def mvaddstr(y,x,str)
+		setpos(y,x)
+		addstr(str)
+	end
+end
 class ChatUI
 	def initialize(userinfo)
 		@userinfo = userinfo
-		@buffer = ""
+		@buffer = "test message"
 		@cursor_pos = 0
 		@scroll_height = 0
 		@channel = ChatChannel.new(MockChannelFetcher.new)
@@ -21,19 +27,19 @@ class ChatUI
 
 	def init_draw
 		init_pairs
-		Ncurses.initscr
-		Ncurses.cbreak
-		Ncurses.noecho
+		Curses.init_screen
+		Curses.cbreak
+		Curses.noecho
 		@maxy,@maxx = TermInfo.screen_size
 	end
 
 	def init_pairs
-		Ncurses.init_pair(1, Ncurses::COLOR_RED, Ncurses::COLOR_BLACK)
-		Ncurses.init_pair(2, Ncurses::COLOR_GREEN, Ncurses::COLOR_BLACK)
-		Ncurses.init_pair(3, Ncurses::COLOR_YELLOW, Ncurses::COLOR_BLACK)
-		Ncurses.init_pair(4, Ncurses::COLOR_BLUE, Ncurses::COLOR_BLACK)
-		Ncurses.init_pair(5, Ncurses::COLOR_MAGENTA, Ncurses::COLOR_BLACK)
-		Ncurses.init_pair(6, Ncurses::COLOR_CYAN, Ncurses::COLOR_BLACK)
+		Curses.init_pair(1, Curses::COLOR_RED, Curses::COLOR_BLACK)
+		Curses.init_pair(2, Curses::COLOR_GREEN, Curses::COLOR_BLACK)
+		Curses.init_pair(3, Curses::COLOR_YELLOW, Curses::COLOR_BLACK)
+		Curses.init_pair(4, Curses::COLOR_BLUE, Curses::COLOR_BLACK)
+		Curses.init_pair(5, Curses::COLOR_MAGENTA, Curses::COLOR_BLACK)
+		Curses.init_pair(6, Curses::COLOR_CYAN, Curses::COLOR_BLACK)
 	end
 
 	def get_channel_lines
@@ -51,8 +57,9 @@ class ChatUI
 	end
 
 	def draw_channel
+		@maxy,@maxx = TermInfo.screen_size
 		@chatlog.clear
-		Ncurses.box(@chatlog,0,0)
+		@chatlog.box(0,0)
 		start = @scroll_height
 		cursor = @maxy-5
 		msgs = get_channel_lines
@@ -65,20 +72,22 @@ class ChatUI
 					author = pieces[1]
 					message = pieces[2..-1].join(";")
 					message = "#{time} <#{author}> #{message}"
-					@chat.log.move(cursor,1)
-					chatlog.addstr("#{message}") #TODO: colorize, baby
+					@chatlog.setpos(cursor,1)
+					@chatlog.addstr("#{message}") #TODO: colorize, baby
 				else
-					@chatlog.move(cursor,1)
+					@chatlog.setpos(cursor,1)
 					@chatlog.addstr("#{message}")
 				end
 			end
 			cursor -= 1
-			@chatlog.wrefresh
+			@chatlog.refresh
 		end
-		@chatlog.wrefresh
+		@chatlog.refresh
 	end
 
 	def channel_heartbeat_thread
+		draw_channel
+		draw_channel
 		loop do
 			@channel.heartbeat
 			draw_channel
@@ -88,27 +97,27 @@ class ChatUI
 
 	def draw_input_buffer
 		@input.clear
-		Ncurses.box(@input,0,0)
+		@input.box(0,0)
 		userstr = "[#{@userinfo.username}] ";
 		userstr_len = userstr.length
 		loop do
 			@input.mvaddstr(1,1,userstr)
 			@input.mvaddstr(1,userstr_len+1,@buffer)
-			@input.move(1,userstr_len+1+@cursor_pos)
+			@input.setpos(1,userstr_len+1+@cursor_pos)
 			ch = @input.getch
-			case ch
-				when Ncurses::KEY_LEFT
+			case ch.ord
+				when Curses::KEY_LEFT
 					@cursor_pos = [0,@cursor_pos-1].max
-				when Ncurses::KEY_RIGHT
+				when Curses::KEY_RIGHT
 					@cursor_pos = [@buffer.length,@cursor_pos+1].min
-				when Ncurses::KEY_BACKSPACE, 127
+				when Curses::KEY_BACKSPACE, 127
 					@buffer = @buffer[0...([0, @cursor_pos-1].max)] + @buffer[@cursor_pos..-1]
 					@cursor_pos = [0,@cursor_pos-1].max
 					@input.mvaddstr(1,userstr_len+1+@buffer.length, " ")
-				when Ncurses::KEY_DC
+				when Curses::KEY_DC
 					@buffer = @cursor_pos == @buffer.size ? @buffer : @buffer[0...([0, @cursor_pos].max)] + @buffer[(@cursor_pos+1)..-1]
 					@input.mvaddstr(1, userstr_len+1+@buffer.length, " ")
-				when Ncurses::KEY_ENTER, "\n".ord, "\r".ord
+				when Curses::KEY_ENTER, "\n".ord, "\r".ord
 					if @buffer.strip != ""
 						@cursor_pos = 0
 						buffer = @buffer
@@ -116,29 +125,29 @@ class ChatUI
 						return buffer
 					end
 				when 27
-					@input.nodelay(true)
+					@input.nodelay=true
     			n = @input.getch()
 					if n == -1
 						@quit = true
 						return
 					end
-					@input.nodelay(false)
+					@input.nodelay=false
 				when 0..255
 					@buffer = @buffer[0..@cursor_pos-1] + ch.chr + @buffer[@cursor_pos..-1]
 					@cursor_pos+=1
 			end
-			@input.wrefresh
+			@input.refresh
 		end
 	end
 
 	def draw_windows
 		in_height = 3;
-		@chatlog = Ncurses::WINDOW.new(Ncurses.LINES-in_height,Ncurses.COLS,0,0)
-		@input = Ncurses::WINDOW.new(in_height,Ncurses.COLS,Ncurses.LINES-in_height,0)
-		Ncurses.box(@chatlog,0,0)
-		Ncurses.box(@input,0,0)
-		@input.wrefresh
-		@chatlog.wrefresh
+		@chatlog = Curses::Window.new(@maxy-in_height,@maxx,0,0)
+		@input = Curses::Window.new(in_height,@maxx,@maxy-in_height,0)
+		@chatlog.box(0,0)
+		@input.box(0,0)
+		@input.refresh
+		@chatlog.refresh
 		@input.keypad(true)
 		server = Thread.new do
 			begin
@@ -146,7 +155,7 @@ class ChatUI
 			rescue Exception => e
 				@quit = true
 				@error = e.message+"\n"+e.backtrace.join("\n")
-				puts "ERROR"
+				puts @error
 			end
 		end
 		loop do
@@ -164,8 +173,9 @@ class ChatUI
 	def run
 		init_draw
 		draw_windows
-		Ncurses.echo
-		Ncurses.endwin
+		Curses.echo
+		Curses.nocbreak
+		Curses.close_screen
 		puts @error
 	end
 end
