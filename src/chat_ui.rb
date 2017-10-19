@@ -20,10 +20,20 @@ class ChatUI
 	end
 
 	def init_draw
+		init_pairs
 		Ncurses.initscr
 		Ncurses.cbreak
 		Ncurses.noecho
 		@maxy,@maxx = TermInfo.screen_size
+	end
+
+	def init_pairs
+		Ncurses.init_pair(1, Ncurses::COLOR_RED, Ncurses::COLOR_BLACK)
+		Ncurses.init_pair(2, Ncurses::COLOR_GREEN, Ncurses::COLOR_BLACK)
+		Ncurses.init_pair(3, Ncurses::COLOR_YELLOW, Ncurses::COLOR_BLACK)
+		Ncurses.init_pair(4, Ncurses::COLOR_BLUE, Ncurses::COLOR_BLACK)
+		Ncurses.init_pair(5, Ncurses::COLOR_MAGENTA, Ncurses::COLOR_BLACK)
+		Ncurses.init_pair(6, Ncurses::COLOR_CYAN, Ncurses::COLOR_BLACK)
 	end
 
 	def get_channel_lines
@@ -50,15 +60,18 @@ class ChatUI
 			message = msgs[i+start]
 			if message != nil
 				if message[0] == "!"
-						pieces = msgs[i+start][1..-1].split(";")
-						time = pieces[0]
-						author = pieces[1]
-						message = pieces[2..-1].join(";")
-						message = "#{time} <#{author}> #{message}"
+					pieces = msgs[i+start][1..-1].split(";")
+					time = pieces[0]
+					author = pieces[1]
+					message = pieces[2..-1].join(";")
+					message = "#{time} <#{author}> #{message}"
+					@chat.log.move(cursor,1)
+					chatlog.addstr("#{message}") #TODO: colorize, baby
+				else
+					@chatlog.move(cursor,1)
+					@chatlog.addstr("#{message}")
 				end
 			end
-			@chatlog.move(cursor,1)
-			@chatlog.addstr("#{message}")
 			cursor -= 1
 			@chatlog.wrefresh
 		end
