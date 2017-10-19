@@ -1,5 +1,5 @@
-require_relative '../src/chat_channel'
-require_relative '../src/mock_channel_fetcher'
+require_relative '../src/core/chat_channel'
+require_relative '../src/net/mock_channel_fetcher'
 
 describe ChatChannel do
 	before :each do

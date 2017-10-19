@@ -7,7 +7,7 @@ class MockChannelFetcher
 	def fetch_heartbeat
 		if(@first)
 			@first = false
-			return ( File.open(File.expand_path(File.dirname(__FILE__))+"/../spec/mockdata/chat_sample.txt", "rb").read )
+			return ( File.open(File.expand_path(File.dirname(__FILE__))+"/../../spec/mockdata/chat_sample.txt", "rb").read )
 		else
 			msgs = @sent_messages.join('\n')
 			@sent_messages = []

@@ -1,4 +1,4 @@
-require_relative '../src/message_formatter'
+require_relative '../src/ui/message_formatter'
 require 'ostruct'
 
 describe MessageFormatter do

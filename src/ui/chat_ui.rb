@@ -1,7 +1,7 @@
 require "curses"
 require "terminfo"
-require_relative 'chat_channel'
-require_relative 'mock_channel_fetcher'
+require_relative '../core/chat_channel'
+require_relative '../net/mock_channel_fetcher'
 require_relative 'message_formatter'
 require_relative 'nick_color'
 class Curses::Window

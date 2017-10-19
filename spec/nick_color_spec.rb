@@ -1,4 +1,4 @@
-require_relative '../src/nick_color'
+require_relative '../src/ui/nick_color'
 
 describe NickColor do
 	before :each do

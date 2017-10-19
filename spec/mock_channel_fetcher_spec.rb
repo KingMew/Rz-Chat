@@ -1,4 +1,4 @@
-require_relative '../src/mock_channel_fetcher'
+require_relative '../src/net/mock_channel_fetcher'
 
 describe MockChannelFetcher do
 	before :each do

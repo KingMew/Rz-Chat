@@ -1,4 +1,4 @@
-require_relative '../src/message_parser'
+require_relative '../src/core/message_parser'
 
 describe MessageParser do
 	before :each do
