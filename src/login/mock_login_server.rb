@@ -11,6 +11,7 @@ class MockLoginServer
 			userdata = OpenStruct.new
 			userdata.username = @username
 			userdata.sessionid = "ayy lmao"
+			userdata.password = @password
 			userdata
 		else
 			false
