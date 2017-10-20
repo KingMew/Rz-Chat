@@ -15,9 +15,14 @@ class ChatChannel
 		@heartbeat.get_userlist
 	end
 
-	def heartbeat
+	def heartbeat(newmsgcmd="")
 		parser = MessageParser.new(@heartbeat.fetch_heartbeat @lastMessageId)
-		@messages = @messages.concat(parser.parse)
+		new_messages = parser.parse
+		if new_messages.size > 0 and newmsgcmd != ""
+			pid = spawn(newmsgcmd+" >/dev/null 2>&1")
+			Process.detach(pid)
+		end
+		@messages = @messages.concat(new_messages)
 		@lastMessageId = @messages.last.id
 	end
 

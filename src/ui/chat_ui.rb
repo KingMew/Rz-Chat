@@ -12,7 +12,7 @@ class Curses::Window
 	end
 end
 class ChatUI
-	def initialize(userinfo)
+	def initialize(userinfo,beepcmd)
 		@userinfo = userinfo
 		@buffer = ""
 		@cursor_pos = 0
@@ -22,6 +22,7 @@ class ChatUI
 		@maxx = 0
 		@maxy = 0
 		@quit = false
+		@beepcmd = beepcmd
 
 		@chatlog
 		@input
@@ -35,7 +36,7 @@ class ChatUI
 
 	def channel_heartbeat
 		@channels.each do |channel|
-			channel.heartbeat
+			channel.heartbeat(@beepcmd)
 		end
 	end
 
@@ -111,7 +112,7 @@ class ChatUI
 		start = @scroll_height
 		cursor = @maxy-(3)*2-2
 		msgs = get_channel_lines
-		(@maxy-5).times do |i|
+		(@maxy-(3)*2-2).times do |i|
 			message = msgs[i+start]
 			if message != nil
 				if message[0] == "!"
@@ -231,7 +232,7 @@ class ChatUI
 					end
 					@input.nodelay=false
 				when 0..255
-					@buffer = @buffer[0..@cursor_pos-1] + ch.chr + @buffer[@cursor_pos..-1]
+					@buffer = @buffer[0..([0,@cursor_pos-1].max)] + ch.chr + @buffer[@cursor_pos..-1]
 					@cursor_pos+=1
 			end
 			@input.refresh

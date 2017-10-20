@@ -21,5 +21,7 @@ if config["username"] != nil && config["password"] != nil
 else
 	userdata = prompt_login
 end
-ui = ChatUI.new(userdata)
+beepcmd = ""
+beepcmd = config["beepcmd"] if config["beepcmd"] != nil
+ui = ChatUI.new(userdata,beepcmd)
 ui.run
