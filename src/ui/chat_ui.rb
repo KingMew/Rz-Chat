@@ -25,6 +25,7 @@ class ChatUI
 
 		@chatlog
 		@input
+		@userlist
 		@error
 	end
 
@@ -84,12 +85,31 @@ class ChatUI
 		lines
 	end
 
+	def draw_userlist
+		@userlist.box(0,0)
+		@userlist.setpos(0,1)
+		@userlist.addstr(get_current_channel.channel_name)
+		@userlist.setpos(1,1)
+		users = get_current_channel.userlist
+		users.each_with_index do |user, index|
+			color = NickColor.new(user).getColor
+			if color > -1
+				@userlist.attron(Curses.color_pair(color))
+				@userlist.addstr(user)
+				@userlist.attroff(Curses.color_pair(color))
+			else
+				@userlist.addstr(user)
+			end
+			@userlist.addstr(", ") unless index == users.size-1
+		end
+	end
+
 	def draw_channel
 		@maxy,@maxx = TermInfo.screen_size
 		@chatlog.clear
 		@chatlog.box(0,0)
 		start = @scroll_height
-		cursor = @maxy-5
+		cursor = @maxy-(3)*2-2
 		msgs = get_channel_lines
 		(@maxy-5).times do |i|
 			message = msgs[i+start]
@@ -131,6 +151,8 @@ class ChatUI
 			@chatlog.refresh
 		end
 		@chatlog.refresh
+		draw_userlist
+		@userlist.refresh
 		reset_cursor
 	end
 
@@ -214,12 +236,15 @@ class ChatUI
 
 	def draw_windows
 		in_height = 3;
-		@chatlog = Curses::Window.new(@maxy-in_height,@maxx,0,0)
+		@chatlog = Curses::Window.new(@maxy-in_height*2,@maxx,in_height,0)
 		@input = Curses::Window.new(in_height,@maxx,@maxy-in_height,0)
+		@userlist = Curses::Window.new(in_height,@maxx,0,0)
 		@chatlog.box(0,0)
 		@input.box(0,0)
+		@userlist.box(0,0)
 		@input.refresh
 		@chatlog.refresh
+		@userlist.refresh
 		@input.keypad(true)
 		server = Thread.new do
 			begin

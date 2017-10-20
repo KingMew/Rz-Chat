@@ -9,6 +9,21 @@ class RzWebChannelFetcher
 		@channelid = channelid
 		@cookie = CGI::Cookie.new("PHPSESSID",sessionid)
 		@lastMessageId = 0
+		@userlist = []
+	end
+	def get_userlist
+		return @userlist
+	end
+	def channel_name
+		if "#{@channelid}" == "1"
+			"The Residents Chat"
+		else
+			"Chat Chat"
+		end
+	end
+	def parse_userlist(body)
+		regex = /<div id="userBox">(.+?)<\/div>/im
+		@userlist = body.scan(regex)[0][0].split(',')
 	end
 	def fetch_heartbeat(lastMessageId)
 		@lastMessageId = lastMessageId
@@ -26,6 +41,7 @@ class RzWebChannelFetcher
 		request['Cookie'] = @cookie.to_s.sub(/; path=$/, '')
 		response = https.request(request)
 		body = response.body
+		parse_userlist body
 		return body
 	end
 	def send_message(msg_text)

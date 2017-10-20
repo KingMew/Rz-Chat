@@ -7,6 +7,14 @@ class ChatChannel
 		@lastMessageId = 0
 	end
 
+	def channel_name
+		@heartbeat.channel_name
+	end
+
+	def userlist
+		@heartbeat.get_userlist
+	end
+
 	def heartbeat
 		parser = MessageParser.new(@heartbeat.fetch_heartbeat @lastMessageId)
 		@messages = @messages.concat(parser.parse)
