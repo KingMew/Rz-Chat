@@ -4,11 +4,13 @@ class ChatChannel
 	def initialize(channel_fetcher)
 		@heartbeat = channel_fetcher
 		@messages = []
+		@lastMessageId = 0
 	end
 
 	def heartbeat
-		parser = MessageParser.new(@heartbeat.fetch_heartbeat)
+		parser = MessageParser.new(@heartbeat.fetch_heartbeat @lastMessageId)
 		@messages = @messages.concat(parser.parse)
+		@lastMessageId = @messages.last.id
 	end
 
 	def send_message(msg)

@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-require_relative 'src/login/mock_login_server'
+require_relative 'src/net/rz_web_login_service'
 require_relative 'src/login/console_login_prompt'
 require_relative 'src/ui/chat_ui'
 require_relative 'src/conf/configuration_loader'
@@ -10,7 +10,7 @@ config = loader.load_config
 userdata = nil
 if config["username"] != nil && config["password"] != nil
 	puts "User info already loaded"
-	logintoken = MockLoginServer.new(config["username"],config["password"])
+	logintoken = RzWebLoginService.new(config["username"],config["password"])
 	userdata = logintoken.login
 	if userdata == false
 		puts "Error. Saved login data is incorrect. You'll need to manually log in."

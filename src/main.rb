@@ -1,4 +1,4 @@
-require_relative 'login/mock_login_server'
+require_relative 'net/rz_web_login_service'
 require_relative 'login/console_login_prompt'
 require_relative 'ui/chat_ui'
 require_relative 'conf/configuration_loader'
@@ -6,7 +6,7 @@ require_relative 'conf/configuration_loader'
 def prompt_login
 	loader = ConfigurationLoader.new
 	config = loader.load_config
-	login_prompt = ConsoleLoginPrompt.new(MockLoginServer)
+	login_prompt = ConsoleLoginPrompt.new(RzWebLoginService)
 	userdata = login_prompt.run
 	config.add("username",userdata.username,true)
 	config.add("password",userdata.password,true)

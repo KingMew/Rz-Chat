@@ -2,6 +2,7 @@ require "curses"
 require "terminfo"
 require_relative '../core/chat_channel'
 require_relative '../net/mock_channel_fetcher'
+require_relative '../net/rz_web_channel_fetcher'
 require_relative 'message_formatter'
 require_relative 'nick_color'
 class Curses::Window
@@ -16,7 +17,7 @@ class ChatUI
 		@buffer = ""
 		@cursor_pos = 0
 		@scroll_height = 0
-		@channel = ChatChannel.new(MockChannelFetcher.new)
+		@channel = ChatChannel.new(RzWebChannelFetcher.new(@userinfo.sessionid,"2"))
 		@maxx = 0
 		@maxy = 0
 		@quit = false
