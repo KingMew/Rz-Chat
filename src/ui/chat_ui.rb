@@ -198,6 +198,10 @@ class ChatUI
 					@cursor_pos = [0,@cursor_pos-1].max
 				when Curses::KEY_RIGHT
 					@cursor_pos = [@buffer.length,@cursor_pos+1].min
+				when Curses::KEY_HOME
+					@cursor_pos = 0
+				when Curses::KEY_END
+					@cursor_pos = @buffer.size
 				when Curses::KEY_BACKSPACE, 127
 					@buffer = @buffer[0...([0, @cursor_pos-1].max)] + @buffer[@cursor_pos..-1]
 					@cursor_pos = [0,@cursor_pos-1].max
