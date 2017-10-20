@@ -87,6 +87,7 @@ class ChatUI
 	end
 
 	def draw_userlist
+		@userlist.clear
 		@userlist.box(0,0)
 		@userlist.setpos(0,1)
 		@userlist.addstr(get_current_channel.channel_name)
@@ -232,7 +233,7 @@ class ChatUI
 					end
 					@input.nodelay=false
 				when 0..255
-					@buffer = @buffer[0..([0,@cursor_pos-1].max)] + ch.chr + @buffer[@cursor_pos..-1]
+					@buffer = @cursor_pos == 0 ? ch.chr+@buffer : @buffer[0..([0,@cursor_pos-1].max)] + ch.chr + @buffer[@cursor_pos..-1]
 					@cursor_pos+=1
 			end
 			@input.refresh
