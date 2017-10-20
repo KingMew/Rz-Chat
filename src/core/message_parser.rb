@@ -25,7 +25,7 @@ class MessageParser
 
 	def clean_urls(msg)
 		urlTemplate = /<a href="(.+?)" target="_blank">\1<\/a>/im
-		pageCardTemplate = /<a href="(.+?)" target="_blank"><div class="messageLink">(.+?)<\/div><\/a>/im
+		pageCardTemplate = /(<br \/>)?<a href="(.+?)" target="_blank"><div class="messageLink"( style="display: inline-block")?>(.+?)<\/div><\/a>/im
 		return msg.gsub(urlTemplate,"\\1").gsub(pageCardTemplate,"")
 	end
 
