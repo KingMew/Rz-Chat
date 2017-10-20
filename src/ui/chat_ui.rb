@@ -17,7 +17,8 @@ class ChatUI
 		@buffer = ""
 		@cursor_pos = 0
 		@scroll_height = 0
-		@channel = ChatChannel.new(RzWebChannelFetcher.new(@userinfo.sessionid,"2"))
+		@channels = [ChatChannel.new(RzWebChannelFetcher.new(@userinfo.sessionid,"1")),ChatChannel.new(RzWebChannelFetcher.new(@userinfo.sessionid,"2"))]
+		@current_channel = 0
 		@maxx = 0
 		@maxy = 0
 		@quit = false
@@ -25,6 +26,16 @@ class ChatUI
 		@chatlog
 		@input
 		@error
+	end
+
+	def get_current_channel
+		@channels[@current_channel]
+	end
+
+	def channel_heartbeat
+		@channels.each do |channel|
+			channel.heartbeat
+		end
 	end
 
 	def init_draw
@@ -60,7 +71,7 @@ class ChatUI
 	end
 
 	def get_channel_lines
-		messages = @channel.get_messages
+		messages = get_current_channel.get_messages
 		lines = []
 		formatter = MessageFormatter.new(@maxx-2)
 		messages.reverse_each do |message|
@@ -127,7 +138,7 @@ class ChatUI
 		draw_channel
 		draw_channel
 		loop do
-			@channel.heartbeat
+			channel_heartbeat
 			draw_channel
 			sleep 2
 		end
@@ -172,6 +183,12 @@ class ChatUI
 				when Curses::KEY_DC
 					@buffer = @cursor_pos == @buffer.size ? @buffer : @buffer[0...([0, @cursor_pos].max)] + @buffer[(@cursor_pos+1)..-1]
 					@input.mvaddstr(1, userstr_len+1+@buffer.length, " ")
+				when Curses::KEY_F5
+					@current_channel = (@current_channel+1) % @channels.length
+					draw_channel
+				when Curses::KEY_F6
+					@current_channel = (@current_channel-1) % @channels.length
+					draw_channel
 				when Curses::KEY_ENTER, "\n".ord, "\r".ord
 					if @buffer.strip != ""
 						@cursor_pos = 0
@@ -216,7 +233,7 @@ class ChatUI
 		loop do
 			msg = draw_input_buffer.strip
 			if msg != "/quit" and msg != ":quit" and msg != ""
-				@channel.send_message msg
+				get_current_channel.send_message msg
 			else
 				@quit = true
 			end
