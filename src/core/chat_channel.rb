@@ -23,7 +23,9 @@ class ChatChannel
 			Process.detach(pid)
 		end
 		@messages = @messages.concat(new_messages)
-		@lastMessageId = @messages.last.id
+		if @messages.size > 0
+			@lastMessageId = @messages.last.id
+		end
 	end
 
 	def send_message(msg)
