@@ -23,6 +23,17 @@ describe ChatChannel do
 		end
 	end
 
+	describe 'userlist and channel name' do
+		it 'should get channel name' do
+			@channel.heartbeat
+			expect(@channel.channel_name).to eq 'Test Chat'
+		end
+		it 'should get user list' do
+			@channel.heartbeat
+			expect(@channel.userlist).to_not be_empty
+		end
+	end
+
 	describe '.send_message' do
 		it 'should be able to send messages' do
 			msg_text = 'The RZ were better before the drummer left'

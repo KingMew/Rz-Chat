@@ -4,6 +4,12 @@ class MockChannelFetcher
 		@msg_id = 215015
 		@sent_messages = []
 	end
+	def channel_name
+		'Test Chat'
+	end
+	def get_userlist
+		['mewee']
+	end
 	def fetch_heartbeat(lastMessageId)
 		if(@first)
 			@first = false
