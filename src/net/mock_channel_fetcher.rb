@@ -4,7 +4,7 @@ class MockChannelFetcher
 		@msg_id = 215015
 		@sent_messages = []
 	end
-	def fetch_heartbeat
+	def fetch_heartbeat(lastMessageId)
 		if(@first)
 			@first = false
 			return ( File.open(File.expand_path(File.dirname(__FILE__))+"/../../spec/mockdata/chat_sample.txt", "rb").read )
