@@ -35,8 +35,14 @@ class ChatUI
 	end
 
 	def channel_heartbeat
+		new_messages = false
 		@channels.each do |channel|
-			channel.heartbeat(@beepcmd)
+			channel.heartbeat
+			new_messages = new_messages || channel.has_new_messages?
+		end
+		if new_messages
+			pid = spawn(@beepcmd+" >/dev/null 2>&1")
+			Process.detach(pid)
 		end
 	end
 
