@@ -5,6 +5,7 @@ require_relative '../net/mock_channel_fetcher'
 require_relative '../net/rz_web_channel_fetcher'
 require_relative 'message_formatter'
 require_relative 'nick_color'
+require_relative 'beepcmd'
 class Curses::Window
 	def mvaddstr(y,x,str)
 		setpos(y,x)
@@ -22,7 +23,7 @@ class ChatUI
 		@maxx = 0
 		@maxy = 0
 		@quit = false
-		@beepcmd = beepcmd
+		@beepcmd = BeepCmd.new(beepcmd)
 
 		@chatlog
 		@input
@@ -35,8 +36,13 @@ class ChatUI
 	end
 
 	def channel_heartbeat
+		new_messages = false
 		@channels.each do |channel|
-			channel.heartbeat(@beepcmd)
+			channel.heartbeat
+			new_messages = new_messages || channel.has_new_messages?
+		end
+		if new_messages
+			@beepcmd.execute
 		end
 	end
 

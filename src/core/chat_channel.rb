@@ -5,6 +5,7 @@ class ChatChannel
 		@heartbeat = channel_fetcher
 		@messages = []
 		@lastMessageId = 0
+		@last_message_count = 0
 	end
 
 	def channel_name
@@ -15,14 +16,14 @@ class ChatChannel
 		@heartbeat.get_userlist
 	end
 
-	def heartbeat(newmsgcmd="")
+	def has_new_messages?
+		@last_message_count < @messages.size
+	end
+
+	def heartbeat()
+		@last_message_count = @messages.size
 		parser = MessageParser.new(@heartbeat.fetch_heartbeat @lastMessageId)
-		new_messages = parser.parse
-		if new_messages.size > 0 and newmsgcmd != ""
-			pid = spawn(newmsgcmd+" >/dev/null 2>&1")
-			Process.detach(pid)
-		end
-		@messages = @messages.concat(new_messages)
+		@messages = @messages.concat(parser.parse)
 		if @messages.size > 0
 			@lastMessageId = @messages.last.id
 		end

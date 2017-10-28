@@ -23,6 +23,16 @@ describe ChatChannel do
 		end
 	end
 
+	describe '.has_new_messages?' do
+		it 'should be able to see new messages' do
+			expect(@channel.has_new_messages?).to be_falsey
+			@channel.heartbeat
+			expect(@channel.has_new_messages?).to be_truthy
+			@channel.heartbeat
+			expect(@channel.has_new_messages?).to be_falsey
+		end
+	end
+
 	describe 'userlist and channel name' do
 		it 'should get channel name' do
 			@channel.heartbeat
