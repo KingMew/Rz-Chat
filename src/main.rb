@@ -11,10 +11,38 @@ def load_parameters
 	clear_conf = FlagParameter.new(:clear_conf)
 	clear_conf.setDescription('clears out all saved configuration when application starts')
 	clear_conf.addIdentifier('--clear-config')
+	help = FlagParameter.new(:help)
+	help.setDescription('shows this help message')
+	help.addIdentifier('--help')
+	help.addIdentifier('-h')
 	parser = ParameterParser.new
 	parser.add(manual_login)
 	parser.add(clear_conf)
-	parser.parse(ARGV)
+	parser.add(help)
+	parser
+end
+
+def usage(defined_parameters)
+	STDERR.puts "usage: #{$PROGRAM_NAME} [options]"
+	positional_parameters = defined_parameters.reverse.reject { |param| param.hasName }
+	named_parameters = defined_parameters.reverse - positional_parameters
+	positional_parameters.each do |param|
+		descriptor = "  #{param.getSymbol.to_s}:\t#{param.getDescription}"
+		STDERR.puts descriptor
+	end
+	STDERR.puts ''
+	STDERR.puts 'Options:'
+	named_parameters.each do |param|
+		descriptor = "  #{param.getIdentifiers.join(', ')}"
+		if param.is_a?(KeyValueParameter)
+			descriptor += ' <val>'
+		end
+		descriptor += "\t#{param.getDescription}"
+		STDERR.puts descriptor
+	end
+	STDERR.puts ''
+	STDERR.puts 'You must create an account on the Residents.com website if you wish to not be a lurker.'
+	exit
 end
 
 def prompt_login
