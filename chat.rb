@@ -3,9 +3,11 @@ require_relative 'src/net/rz_web_login_service'
 require_relative 'src/login/console_login_prompt'
 require_relative 'src/ui/chat_ui'
 require_relative 'src/conf/configuration_loader'
+require_relative 'src/core/rz_quotes'
 require_relative 'src/main'
 
 appstate = load_parameters.parse(ARGV)
+puts RzQuote.new.quote(appstate.clifford)
 loader = ConfigurationLoader.new
 if appstate.clear_conf
 	loader.clear_config

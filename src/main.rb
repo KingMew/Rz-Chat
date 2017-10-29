@@ -15,10 +15,14 @@ def load_parameters
 	help.setDescription('shows this help message')
 	help.addIdentifier('--help')
 	help.addIdentifier('-h')
+	clifford = FlagParameter.new(:clifford)
+	clifford.setDescription('makes random quotes only appear from the first 7 albums')
+	clifford.addIdentifier('--clifford')
 	parser = ParameterParser.new
 	parser.add(manual_login)
 	parser.add(clear_conf)
 	parser.add(help)
+	parser.add(clifford)
 	parser
 end
 
