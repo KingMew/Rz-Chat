@@ -5,10 +5,11 @@ require_relative 'src/ui/chat_ui'
 require_relative 'src/conf/configuration_loader'
 require_relative 'src/main'
 
+appstate = load_parameters
 loader = ConfigurationLoader.new
 config = loader.load_config
 userdata = nil
-if config["username"] != nil && config["password"] != nil
+if config["username"] != nil && config["password"] != nil && !appstate.manual_login
 	puts "User info already loaded"
 	logintoken = RzWebLoginService.new(config["username"],config["password"])
 	userdata = logintoken.login

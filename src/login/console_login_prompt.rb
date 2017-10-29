@@ -10,7 +10,7 @@ class ConsoleLoginPrompt
 
 	def get_userinfo
 		print "Username: "
-		@username = gets.strip
+		@username = STDIN.gets.strip
 		print "Password: "
 		@password = STDIN.noecho(&:gets).strip
 		puts

@@ -2,6 +2,16 @@ require_relative 'net/rz_web_login_service'
 require_relative 'login/console_login_prompt'
 require_relative 'ui/chat_ui'
 require_relative 'conf/configuration_loader'
+require_relative 'parameter_parser/ParameterParser'
+
+def load_parameters
+	manual_login = FlagParameter.new(:manual_login)
+	manual_login.setDescription('forces a manual login even if auto-login data exists')
+	manual_login.addIdentifier('--manual-login')
+	parser = ParameterParser.new
+	parser.add(manual_login)
+	parser.parse(ARGV)
+end
 
 def prompt_login
 	loader = ConfigurationLoader.new
