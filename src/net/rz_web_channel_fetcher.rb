@@ -37,7 +37,7 @@ class RzWebChannelFetcher
 		}
 		request = Net::HTTP::Post.new(uri.request_uri)
 		request.set_form_data(data)
-		request['User-Agent'] = "Mozilla/5.0 (X11; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0"
+		request['User-Agent'] = "Rz-Chat Terminal Client (https://github.com/meisekimiu/Rz-Chat)"
 		request['Cookie'] = @cookie.to_s.sub(/; path=$/, '')
 		response = https.request(request)
 		body = response.body
@@ -54,6 +54,7 @@ class RzWebChannelFetcher
 		}
 		request = Net::HTTP::Post.new(uri.request_uri)
 		request.set_form_data(data)
+		request['User-Agent'] = "Rz-Chat Terminal Client (https://github.com/meisekimiu/Rz-Chat)"
 		request['Cookie'] = @cookie.to_s.sub(/; path=$/, '')
 		response = https.request(request)
 	end
