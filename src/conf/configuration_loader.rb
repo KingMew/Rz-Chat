@@ -39,4 +39,11 @@ class ConfigurationLoader
 		@config.write(file)
 		file.close
 	end
+
+	def clear_config
+		path = File.expand_path(locate_config)
+		if File.exist?(path)
+			FileUtils.rm(path)
+		end
+	end
 end

@@ -7,6 +7,9 @@ require_relative 'src/main'
 
 appstate = load_parameters
 loader = ConfigurationLoader.new
+if appstate.clear_conf
+	loader.clear_config
+end
 config = loader.load_config
 userdata = nil
 if config["username"] != nil && config["password"] != nil && !appstate.manual_login
