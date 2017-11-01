@@ -52,7 +52,7 @@ class RzQuote
 			"When I was a lonely teenager...",
 			"I was a ping pong ball a jet black ping pong ball",
 			"I love the rabbits and I know the rabbits love me",
-			"Life is lonely train wracked by God",
+			"Life is a lonely train wracked by God",
 			"The Ghost of Hope said NO!",
 			"Such a fire you never saw. It was an oil fire... AN OIL FIRE!",
 			"I have seen his face before, and yes I even know his name."
