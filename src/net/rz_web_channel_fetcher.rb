@@ -39,10 +39,14 @@ class RzWebChannelFetcher
 		request.set_form_data(data)
 		request['User-Agent'] = "Rz-Chat Terminal Client (https://github.com/meisekimiu/Rz-Chat)"
 		request['Cookie'] = @cookie.to_s.sub(/; path=$/, '')
-		response = https.request(request)
-		body = response.body
-		parse_userlist body
-		return body
+		body = ""
+		begin
+			response = https.request(request)
+			body = response.body
+			parse_userlist body
+		ensure
+			return body
+		end
 	end
 	def send_message(msg_text)
 		post_url = "http://residents.com/fans/chat/post.php"
