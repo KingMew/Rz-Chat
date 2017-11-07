@@ -1,4 +1,5 @@
 require 'cgi'
+require 'time'
 class MessageParser
 	Message = Struct.new("Message",:id,:time,:author,:message)
 	def initialize(htmldata)
@@ -18,8 +19,13 @@ class MessageParser
 		return msg.strip
 	end
 
+	def get_localtime(time)
+		t = Time.parse(time+' PST')
+		t.getlocal.to_s
+	end
+
 	def clean_timestamp(time)
-		pieces = time.split(" ")
+		pieces = get_localtime(time).split(" ")
 		return pieces[1][0..7]
 	end
 
