@@ -171,6 +171,7 @@ class ChatUI
 			channel_heartbeat
 			draw_channel
 			sleep 2
+			break if @quit
 		end
 	end
 
@@ -267,6 +268,12 @@ class ChatUI
 				puts @error
 			end
 		end
+		trap("INT") {
+			server.exit
+			close_draw
+			puts "Received interrupt signal."
+			exit!
+		}
 		loop do
 			msg = draw_input_buffer.strip
 			if msg != "/quit" and msg != ":quit" and msg != ""
@@ -276,15 +283,31 @@ class ChatUI
 			end
 			break if @quit
 		end
-		server.kill
+		server.exit
+	end
+
+	def close_draw
+		Curses.nocbreak
+		Curses.echo
+		@chatlog.refresh
+		@input.refresh
+		@userlist.refresh
+		@chatlog.close
+		@input.close
+		@userlist.close
+		Curses.refresh
+		Curses.clear
+		sleep 2
+		Curses.close_screen
 	end
 
 	def run
 		init_draw
-		draw_windows
-		Curses.echo
-		Curses.nocbreak
-		Curses.close_screen
+		begin
+			draw_windows
+		ensure
+			close_draw
+		end
 		puts @error
 	end
 end

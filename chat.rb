@@ -35,3 +35,5 @@ beepcmd = ""
 beepcmd = config["beepcmd"] if config["beepcmd"] != nil
 ui = ChatUI.new(userdata,beepcmd)
 ui.run
+`reset`
+puts RzQuote.new.quote(appstate.clifford)
