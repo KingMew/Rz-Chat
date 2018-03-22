@@ -20,7 +20,7 @@ class MessageParser
 	end
 
 	def get_localtime(time)
-		t = Time.parse(time+' PST')
+		t = Time.parse(time+' PT')
 		t.getlocal.to_s
 	end
 
