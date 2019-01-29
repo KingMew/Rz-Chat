@@ -2,6 +2,7 @@ class RzQuote
 	def initialize
 		@clifford_quotes = [
 			"Do you ever... wonder who you are?",
+			"When everyone lives in the future, the present is au revoir."
 			"Smelly Tongues Looked Just as They Felt!",
 			"How much marriage urges a windmill to pinch infinity?",
 			"Welcome to the offshoots of Jupiter.",
@@ -43,8 +44,12 @@ class RzQuote
 			"Some say the song of a crow is a lie",
 			"There's supposed to be a beautiful blue light ...but all I saw was eels",
 			"I was lifted up high to a hole in the sky",
+			"What have my chickens done now?",
+			"Oh, we have to buy a tulip!",
+			"I ride the river of crime",
 			"Bitter is the aftertaste of a dream that dies",
 			"Some people like cruel lovers, some like giving lovers, some like submissive, some like strong.",
+			"And that's why God made alcohol ...especially bourbon.",
 			"There's nothing there that cares for silly children on the moon",
 			"Let our love become the seeds that turn into tomorrow.",
 			"I guess even the Sandman must feel some kind of love...",
@@ -55,7 +60,10 @@ class RzQuote
 			"Life is a lonely train wracked by God",
 			"The Ghost of Hope said NO!",
 			"Such a fire you never saw. It was an oil fire... AN OIL FIRE!",
-			"I have seen his face before, and yes I even know his name."
+			"I have seen his face before, and yes I even know his name.",
+			"This is your invitation to the Theory of Obscurity!",
+			"Who - threw the voodoo doll at me?",
+			"I'm sitting here now eating a bacon cheeseburger... with two patties!!!"
 		]
 	end
 
