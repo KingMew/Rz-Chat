@@ -2,7 +2,7 @@ class RzQuote
 	def initialize
 		@clifford_quotes = [
 			"Do you ever... wonder who you are?",
-			"When everyone lives in the future, the present is au revoir."
+			"When everyone lives in the future, the present is au revoir.",
 			"Smelly Tongues Looked Just as They Felt!",
 			"How much marriage urges a windmill to pinch infinity?",
 			"Welcome to the offshoots of Jupiter.",
