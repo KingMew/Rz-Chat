@@ -14,8 +14,10 @@ class ConfigurationLoader
 	def locate_config
 		if env_windows?
 			"#{ENV['APPDATA']}"+'/RzChat/config'
-		else
+		elsif ENV['XDG_CONFIG_HOME']
 			"#{ENV['XDG_CONFIG_HOME']}"+'/RzChat/config'
+		else
+			"#{File.dirname(__FILE__)}/../../.config/config"
 		end
 	end
 
