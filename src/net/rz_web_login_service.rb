@@ -9,12 +9,13 @@ class RzWebLoginService
 	end
 
 	def do_login
-		uri = URI("http://www.residents.com/fans/chat/login.php")
+		uri = URI("https://www.residents.com/fans/chat/login.php")
 		https = Net::HTTP.new(uri.host, uri.port)
 		data = {
 			"username" => @username,
 			"userpass" => @password
 		}
+		https.use_ssl = true
 		sessionID = ""
 		response = https.post(uri.path,URI.encode_www_form(data))
 		if response.code != '200'
@@ -24,7 +25,7 @@ class RzWebLoginService
 				sessionId = response.get_fields('Set-Cookie')[0].split(";")[0]
 				return sessionId.split("=")[1]
 			else
-				p response
+				p response.body
 				return false
 			end
 		end

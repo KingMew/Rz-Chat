@@ -27,9 +27,10 @@ class RzWebChannelFetcher
 	end
 	def fetch_heartbeat(lastMessageId)
 		@lastMessageId = lastMessageId
-		heartbeat_url = "http://residents.com/fans/chat/heartbeat.php"
+		heartbeat_url = "https://residents.com/fans/chat/heartbeat.php"
 		uri = URI(heartbeat_url)
 		https = Net::HTTP.new(uri.host, uri.port)
+		https.use_ssl = true
 		data = {
 			"advert" => "false",
 			"chatid" => "#{@channelid}",
@@ -49,9 +50,10 @@ class RzWebChannelFetcher
 		end
 	end
 	def send_message(msg_text)
-		post_url = "http://residents.com/fans/chat/post.php"
+		post_url = "https://residents.com/fans/chat/post.php"
 		uri = URI(post_url)
 		https = Net::HTTP.new(uri.host, uri.port)
+		https.use_ssl = true
 		data = {
 				"text" => msg_text,
 				"chatId" => "#{@channelid}"
