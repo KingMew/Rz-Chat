@@ -1,5 +1,6 @@
 require 'cgi'
 require 'time'
+require 'tzinfo'
 class MessageParser
 	Message = Struct.new("Message",:id,:time,:author,:message)
 	def initialize(htmldata)
@@ -20,7 +21,8 @@ class MessageParser
 	end
 
 	def get_localtime(time)
-		t = Time.parse(time+' PT')
+		tz = TZInfo::Timezone.get('America/Los_Angeles')
+		t = Time.parse(time+' '+tz.abbr)
 		t.getlocal.to_s
 	end
 
