@@ -17,6 +17,7 @@ class MessageParser
 		msg = CGI.unescapeHTML(msg)
 		msg = convert_emojis(msg)
 		msg = clean_urls(msg)
+		msg.gsub!(/[\n\r]+/i," / ");
 		return msg.strip
 	end
 

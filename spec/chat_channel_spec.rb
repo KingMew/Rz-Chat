@@ -14,12 +14,12 @@ describe ChatChannel do
 	describe '.heartbeat' do
 		it 'should be able to heartbeat' do
 			@channel.heartbeat
-			expect(@channel.get_messages.length).to eq 10
+			expect(@channel.get_messages.length).to eq 11
 		end
 		it 'should keep old messages' do
 			@channel.heartbeat
 			@channel.heartbeat
-			expect(@channel.get_messages.length).to eq 10
+			expect(@channel.get_messages.length).to eq 11
 		end
 	end
 
@@ -50,7 +50,7 @@ describe ChatChannel do
 			@channel.heartbeat
 			@channel.send_message msg_text
 			@channel.heartbeat
-			expect(@channel.get_messages[10].message).to eq msg_text
+			expect(@channel.get_messages[11].message).to eq msg_text
 		end
 	end
 end

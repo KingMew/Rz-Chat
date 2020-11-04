@@ -33,5 +33,9 @@ describe MessageParser do
 			messages = @parser.parse
 			expect(messages[9].message).to eq "/me remembers Pepperidge Farm"
 		end
+		it "should parse out newlines" do
+			messages = @parser.parse
+			expect(messages[10].message).to eq "test / test test / test!!!"
+		end
 	end
 end
